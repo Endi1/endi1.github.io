@@ -1,0 +1,5 @@
+# What powers this blog
+
+Through my journey of blogging on and off for some years now, I've tried several static site generators to power my blog. From [Jekyll](https://jekyllrb.com/) to [Hugo](https://gohugo.io/) and [Pelican](https://github.com/getpelican/pelican). All of them for one reason or another have been unsatisfying (mostly because of bloat and a lot of features which I don't really need).
+
+So I did what every normal person would do in these cases. I decided to roll with my own solution. My initial plan was to run everythin on [Pandoc](https://pandoc.org/) and bash scripts, but that proved to be a bit _too simple_ feature-wise, so what I ended up with was my own static site generator called [Aretes](https://github.com/Endi1/Aretes). It's written in Haskell and relies on Pandoc to compile my Markdown files into HTML. Writing a static site generator is a rite of passage for a lot of programmers, so I assume this is mine. Hopefully it will be enough and my last stop in my long road of finding a decent blogging platform so I can focus more on writing than spending time comparing features of different blog platforms.
