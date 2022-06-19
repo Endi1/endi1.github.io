@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html><head><title>Using Python schema to validate scraped objects</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://unpkg.com/bamboo.css" rel="stylesheet"><meta name="description" content="Codepenguin -- code and other stuff"><link rel="canonical" href="http://codepengu.in"><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-FL3V8GHGKZ"></script><script type="text/javascript" src="js/ganalytics.js"></script></head><body><h1>Using Python schema to validate scraped objects</h1>
+<p>Web scraping describes the various techniques employed in extracting data from websites. More often than not, this is done programmatically using tiny programs called spiders. However, web scraping offers insidious challenges and obstacles that might not be immediately obvious. One of them is issues with <strong>data validity.</strong></p>
+<p>Usually the final objective of web scraping is extracting structured data from semi-structured or unstructured content. The structured data often comes with a prerequisite of data validity. In other words, for the structured data that we need to scrape, certain (or all) data points needs to satisfy some requirements in order to be considered valid. For example, let’s assume that we have to scrape property data from a collection of websites that list new properties for sale. We need to scrape the following data (among others):</p>
+<ul>
+<li>price (in USD)</li>
+<li>surface</li>
+<li>number of rooms</li>
+<li>location</li>
+</ul>
+<p>For all of them we need to make sure that they are found in each object in the output, and that they are of the correct type and value. For example, <em>price, number of rooms, and surface</em> all need to be numbers. <em>location</em> must be a string. Furthermore, <em>number of rooms</em> must not be too big (there’s not that many houses with over 100 rooms on the market, if any). If any of these conditions are not met, then it means that there is a problem with scraping and parsing one (or more) of the pages and we risk sending faulty data downstream.</p>
+<p>Most large-scale web crawling solutions will have some sort of pipeline in their workflow that is dedicated to validating and processing the scraped data. One way to do validation is by using ad-hoc logic that makes sure that the data points are of the type and value required. Often this involves complex multi-step checks and algorithms and it’s hard to scale and update as new data types are scraped or if old ones have updated requirements.</p>
+<p>To avoid this, I like using a Python library called <a href="https://github.com/keleshev/schema">schema</a>. It allows you to validate JSON or YAML data using Python data types and logic. To continue the example above, for the property data we scrape, we can define the following schema:</p>
+<pre><code>from schema import Schema, And, Use, Optional, SchemaError
+
+schema = Schema([{
+	&#39;price&#39;: int,
+	&#39;surface&#39;:  int,
+	&#39;number_of_rooms&#39;: And(int, lambda n: 0 &lt; n and n &lt;= 100),
+    &#39;location&#39;: str
+}])</code></pre>
+<p>Finally in the pipeline we can simply do</p>
+<pre><code>schema.validate(data)</code></pre>
+<p>If the data is valid then it will return the data, otherwise a <code>SchemaError</code> exception will be thrown.</p>
+<p>Doing this we can add a clear validation layer that is separate from any processing layer which is easy to read, update, and scale as needed.</p></body></html>
