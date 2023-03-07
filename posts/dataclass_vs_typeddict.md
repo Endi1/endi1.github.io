@@ -4,93 +4,82 @@ Type annotations were introduced to Python with [PEP484](https://peps.python.org
 
 Take the following example:
 
-```python
-def hello(a):
-	return "hello " + a
+	def hello(a):
+		return "hello " + a
 
-hello(2)
-```
+	hello(2)
 
 The above code would rase this error:
-```python
-TypeError: can only concatenate str (not "int") to str
-```
+
+	TypeError: can only concatenate str (not "int") to str
 
 However, using type annotations would help us catch this error before the code is even executed:
 
-```python
-def hello(a: str) -> str:
-	return "hello " + a
+	def hello(a: str) -> str:
+		return "hello " + a
 
-hello(2)
-```
+	hello(2)
 
 Trying to compile this code with mypy would yield the following error:
-```
-error: Argument 1 to "hello" has incompatible type "int"
-```
+
+	error: Argument 1 to "hello" has incompatible type "int"
 
 Of course, using a good IDE or text editor with good static analysis tools would help us catch this error while writing the code. 
 
 Obviously, Python type annotations work with classes as well. For example:
-```python
-import requests
-from typing import List
 
-class Book:
-	title: str
-	authors: List[str]
+	import requests
+	from typing import List
 
-def get_book_from_api(endpoint: str) -> Book:
-	response = requests.get(endpoint)
-	response_json = response.json()
-	book = Book()
-	book.title = response_json["title"]
-	book.authors = response_json["authors"]
+	class Book:
+		title: str
+		authors: List[str]
 
-	return book
-```
+	def get_book_from_api(endpoint: str) -> Book:
+		response = requests.get(endpoint)
+		response_json = response.json()
+		book = Book()
+		book.title = response_json["title"]
+		book.authors = response_json["authors"]
+
+		return book
 
 In the example above, the `Book` class works as a wrapper around some data we get from a rest endpoint. It contains two fields, a title field and an authors field. Using Python type annotations we have defined the types of both those fields. However, assigning the values to each field one by one is a bit annoying, and the OOP way to do that would be to assign attributes inside the `__init__` method:
 
-```python
-class Book:
-	title: str
-	authors: List[str]
+	class Book:
+		title: str
+		authors: List[str]
 
-	def __init__(self, title: str, authors: List[str]):
-		self.title = title
-		self.authors = authors
+		def __init__(self, title: str, authors: List[str]):
+			self.title = title
+			self.authors = authors
 
-def get_book_from_api(endpoint: str) -> Book:
-	response = requests.get(endpoint)
-	response_json = response.json()
-	book = Book(title=response_json["title"], authors=response_json["authors"])
+	def get_book_from_api(endpoint: str) -> Book:
+		response = requests.get(endpoint)
+		response_json = response.json()
+		book = Book(title=response_json["title"], authors=response_json["authors"])
 
-	return book
-```
+		return book
 
 This is great, we're making important steps here. We managed to create a Python class that uses type annotations and can be constructed using the `__init__` method. But this class is still just a wrapper around some data, so it would be great if we can reduce the boilerplate for this code while still keeping all the advantages that the Python type system gives us
 
 This is where `dataclass` becomes useful. It's a Python decorator that automatically adds the `__init__` method (including types!) and some additional goodies to a Python class. It can be used as follows:
 
-```python
-import requests
-from dataclasses import dataclass
-from typing import List
+	import requests
+	from dataclasses import dataclass
+	from typing import List
 
-@dataclass
-class Book:
-	title: str
-	authors: List[str]
+	@dataclass
+	class Book:
+		title: str
+		authors: List[str]
 
-def get_book_from_api(endpoint: str) -> Book:
-	response = requests.get(endpoint)
-	response_json = response.json()
-	book = Book(title=response_json["title"], authors=response_json["authors"])
+	def get_book_from_api(endpoint: str) -> Book:
+		response = requests.get(endpoint)
+		response_json = response.json()
+		book = Book(title=response_json["title"], authors=response_json["authors"])
 
-	return book
-```
+		return book
 
 As you we can see, there's no need to manually define the `__init__` method anymore. Not only does this reduce the time needed to write classes since it reduces the amount of boilerplate code, it also reduces the probability of errors since there's less boilerplate code for us to type in.
 
@@ -98,41 +87,35 @@ However, dataclasses are not a silver bullet and have some drawbacks. But in ord
 
 Duck typing cannot be followed with dataclasses though. Consider the following example:
 
-```python
-@dataclass
-class Table:
-	color: str
-	age: int
+	@dataclass
+	class Table:
+		color: str
+		age: int
 
-@dataclass
-class Bookshelf:
-	color: str
-	age: int
+	@dataclass
+	class Bookshelf:
+		color: str
+		age: int
 
-Table(color="brown", age=12) == Bookshelf(color="brown", age=12) # False
-```
+	Table(color="brown", age=12) == Bookshelf(color="brown", age=12) # False
 
 Following the logic of duck typing, then both the `Table` and the `Bookshelf`  objects should represent the same type since they have the same attributes and the same values. However,  they are not treated as equal objects because they belong to different classes. In order to strip that difference between both objects we have to resort to dictionaries:
 
-```python
-{"color": "brown", "age": 12} == {"color": "brown", "age": 12} # True
-```
+	{"color": "brown", "age": 12} == {"color": "brown", "age": 12} # True
 
 But using Python dicts would make us lose all the advantages that Python types gives us, right? Wrong. This is where `TypedDict` comes into play. `TypedDict` basically allows Python dicts to work as types:
 
-```python
-from typing import TypedDict
-
-class Table(TypedDict):
-    color: str
-    age: int
-
-class Bookshelf(TypedDict):
-    color: str
-    age: int
-
-Table(color="brown", age=12) == Bookshelf(color="brown", age=12) # True
-```
+	from typing import TypedDict
+	
+	class Table(TypedDict):
+	    color: str
+	    age: int
+	
+	class Bookshelf(TypedDict):
+	    color: str
+	    age: int
+	
+	Table(color="brown", age=12) == Bookshelf(color="brown", age=12) # True
 
 However, even though `TypedDict` can give us all the advantages of duck typing, it has two big disadvantages compared to dataclasses:
 
