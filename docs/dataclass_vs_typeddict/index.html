@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html><head><title>Dataclass vs TypedDict in Python</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="/css/bamboo.min.css" rel="stylesheet"><link href="/css/custom.css" rel="stylesheet"><meta name="description" content="Codepenguin -- code and other stuff"><link rel="canonical" href="http://codepengu.in"><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-FL3V8GHGKZ"></script><script type="text/javascript" src="/js/ganalytics.js"></script></head><body><h1>Dataclass vs TypedDict in Python</h1>
+<p>Type annotations were introduced to Python with <a href="https://peps.python.org/pep-0484/">PEP484</a> and since then they have been a staple tool for most Python programs. They open up Python code to easier static analysis and refactoring and potential runtime type checking. Not to mention making the code a lot easier to reason with in general.</p>
+<p>Take the following example:</p>
+<p>```python def hello(a): return "hello " + a</p>
+<p>hello(2) ```</p>
+<p>The above code would rase this error: <code>python TypeError: can only concatenate str (not "int") to str</code></p>
+<p>However, using type annotations would help us catch this error before the code is even executed:</p>
+<p>```python def hello(a: str) -&gt; str: return "hello " + a</p>
+<p>hello(2) ```</p>
+<p>Trying to compile this code with mypy would yield the following error: <code>error: Argument 1 to "hello" has incompatible type "int"</code></p>
+<p>Of course, using a good IDE or text editor with good static analysis tools would help us catch this error while writing the code.</p>
+<p>Obviously, Python type annotations work with classes as well. For example: ```python import requests from typing import List</p>
+<p>class Book: title: str authors: List[str]</p>
+<p>def get<em>book</em>from<em>api(endpoint: str) -&gt; Book: response = requests.get(endpoint) response</em>json = response.json() book = Book() book.title = response<em>json["title"] book.authors = response</em>json["authors"]</p>
+<pre><code>return book</code></pre>
+<p>```</p>
+<p>In the example above, the <code>Book</code> class works as a wrapper around some data we get from a rest endpoint. It contains two fields, a title field and an authors field. Using Python type annotations we have defined the types of both those fields. However, assigning the values to each field one by one is a bit annoying, and the OOP way to do that would be to assign attributes inside the <code>__init__</code> method:</p>
+<p>```python class Book: title: str authors: List[str]</p>
+<pre><code>def __init__(self, title: str, authors: List[str]):
+	self.title = title
+	self.authors = authors</code></pre>
+<p>def get<em>book</em>from<em>api(endpoint: str) -&gt; Book: response = requests.get(endpoint) response</em>json = response.json() book = Book(title=response<em>json["title"], authors=response</em>json["authors"])</p>
+<pre><code>return book</code></pre>
+<p>```</p>
+<p>This is great, we're making important steps here. We managed to create a Python class that uses type annotations and can be constructed using the <code>__init__</code> method. But this class is still just a wrapper around some data, so it would be great if we can reduce the boilerplate for this code while still keeping all the advantages that the Python type system gives us</p>
+<p>This is where <code>dataclass</code> becomes useful. It's a Python decorator that automatically adds the <code>__init__</code> method (including types!) and some additional goodies to a Python class. It can be used as follows:</p>
+<p>```python import requests from dataclasses import dataclass from typing import List</p>
+<p>@dataclass class Book: title: str authors: List[str]</p>
+<p>def get<em>book</em>from<em>api(endpoint: str) -&gt; Book: response = requests.get(endpoint) response</em>json = response.json() book = Book(title=response<em>json["title"], authors=response</em>json["authors"])</p>
+<pre><code>return book</code></pre>
+<p>```</p>
+<p>As you we can see, there's no need to manually define the <code>__init__</code> method anymore. Not only does this reduce the time needed to write classes since it reduces the amount of boilerplate code, it also reduces the probability of errors since there's less boilerplate code for us to type in.</p>
+<p>However, dataclasses are not a silver bullet and have some drawbacks. But in order to understand those drawbacks we must first introduce the notion of <a href="https://en.wikipedia.org/wiki/Duck_typing">duck typing</a>. The idea behind it is simple: if it quacks like a duck and walks like a duck then it's a duck. In other words, an object is of a particular type if it has all the methods and attributes required by that type.</p>
+<p>Duck typing cannot be followed with dataclasses though. Consider the following example:</p>
+<p>```python @dataclass class Table: color: str age: int</p>
+<p>@dataclass class Bookshelf: color: str age: int</p>
+<p>Table(color="brown", age=12) == Bookshelf(color="brown", age=12) # False ```</p>
+<p>Following the logic of duck typing, then both the <code>Table</code> and the <code>Bookshelf</code> objects should represent the same type since they have the same attributes and the same values. However, they are not treated as equal objects because they belong to different classes. In order to strip that difference between both objects we have to resort to dictionaries:</p>
+<p><code>python {"color": "brown", "age": 12} == {"color": "brown", "age": 12} # True</code></p>
+<p>But using Python dicts would make us lose all the advantages that Python types gives us, right? Wrong. This is where <code>TypedDict</code> comes into play. <code>TypedDict</code> basically allows Python dicts to work as types:</p>
+<p>```python from typing import TypedDict</p>
+<p>class Table(TypedDict): color: str age: int</p>
+<p>class Bookshelf(TypedDict): color: str age: int</p>
+<p>Table(color="brown", age=12) == Bookshelf(color="brown", age=12) # True ```</p>
+<p>However, even though <code>TypedDict</code> can give us all the advantages of duck typing, it has two big disadvantages compared to dataclasses:</p>
+<ol>
+<li>Validation is harder</li>
+<li>Not immutable</li>
+</ol>
+<p>Let's start with the first point. Since dataclasses can have explicit <code>__init__</code> methods, then they can be validated whenever an object of that type is constructed. This is not true for <code>TypedDict</code> and every time we construct a dictionary of a specific type, then we'd have to validate all its values at runtime.</p>
+<p>Whereas for immutability, in dataclasses its ensured by the <code>frozen=True</code> argument. If set, it ensures that any object that belongs to that type would be immutable, which is not possible with <code>TypedDict</code>.</p><head><footer><ul><li><a href="https://twitter.com/codepengu1n">Twitter</a></li><li><a href="mailto:endisukaj@gmail.com">Email</a></li></ul></footer></head></body></html>
