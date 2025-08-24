@@ -1,0 +1,82 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Emacs static site generators</title></head><body><div class="header"><a href="/">endisukaj.dev</a></div><div class="content"><div class="title"><div class="title"><h1>Emacs static site generators</h1></div></div><div><p>Since I came back to Emacs, I&apos;ve been using org-mode daily to organize my TODOs,
+agenda, and notes. In fact, org-mode was one of the reasons I came back to
+Emacs. As my writing is deeply coupled with my research process which is done in
+part using org-roam, it would make sense, in my opinion, to connect the writing
+and publishing process to it and be able to do everything inside Emacs, in true
+emacsian fashion.
+</p>
+
+<p>Preferrably the writing would be done in org-mode and the process would be a
+simple and automated one that would take me from an org-mode file to a blog
+post. Ideally, the entire blog would be a series of interconnected org files.
+</p>
+</div>
+<div><h2 id="one-85c39c64b5">One.el</h2><div><p><a href="https://github.com/tonyaldon/one.el">https://github.com/tonyaldon/one.el</a>
+</p>
+</div>
+<div><h3 id="one-142360eee3">Pros</h3><div><ul><li><p>Can be generated with a single Emacs command
+</p>
+</li>
+<li><p>Can be modified with Elisp and CSS
+</p>
+</li>
+<li><p>HTML templates are plain Elisp data
+</p>
+</li>
+<li><p>No config file
+</p>
+</li>
+<li><p>No external dependencies
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div><h3 id="one-f52c783793">Cons</h3><div><ul><li><p>Everything is contained in one single org file
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div><h3 id="one-91cb7ef5d3">Installation</h3><div><p>Installation is pretty easy, you can install it from MELPA with <code class="one-hl one-hl-inline">package-install</code>
+</p>
+</div>
+</div>
+<div><h3 id="one-a990c8bf01">Usage</h3><div><p>Generating a blank project is pretty easy as well, you can run
+<code class="one-hl one-hl-inline">one-default-new-project</code> inside a folder and it will generate a new project for
+you with some sane defaults.
+</p>
+
+<p>After you generate the project, you can simply run <code class="one-hl one-hl-inline">one-build</code> to generate the
+site under a folder called <code class="one-hl one-hl-inline">./public/</code>.
+</p>
+</div>
+</div>
+</div>
+<div><h2 id="one-942231e7b4">Org Publish</h2><div><p><a href="https://orgmode.org/manual/Publishing.html">https://orgmode.org/manual/Publishing.html</a>
+</p>
+</div>
+<div><h3 id="one-386644449d">Pros</h3><div><ul><li><p>Built into org-mode
+</p>
+</li>
+<li><p>No additional dependencies
+</p>
+</li>
+<li><p>Highly configurable
+</p>
+</li>
+<li><p>Can be configured to export to various formats, not just HTML (e.g. PDF,
+Markdown, etc)
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div><h3 id="one-aef96c5b12">Cons</h3><div><ul><li><p>Needs some work to get up and running
+</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="nav"><a href="/blog/using-python-schema-to-validate-scraped-objects/">PREV</a><a href="/blog/feynman-technique/">RANDOM</a></div></div></body></html>

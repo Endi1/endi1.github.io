@@ -1,0 +1,191 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Dataclass vs TypedDict in Python</title></head><body><div class="header"><a href="/">endisukaj.dev</a></div><div class="content"><div class="title"><div class="title"><h1>Dataclass vs TypedDict in Python</h1></div></div><div><p>Type annotations were introduced to Python with <a href="https://peps.python.org/pep-0484/">PEP484</a> and since then they have
+been a staple tool for most Python programs. They open up Python code to easier
+static analysis and refactoring and potential runtime type checking. Not to
+mention making the code a lot easier to reason with in general.
+</p>
+
+<p>Take the following example:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-keyword">def</span> <span class="one-hl-function-name">hello</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-name">a</span><span class="one-hl-bracket">)</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-keyword">return</span> <span class="one-hl-string">"hello "</span> <span class="one-hl-operator">+</span> <span class="one-hl-variable-use">a</span>
+
+<span class="one-hl-function-call">hello</span><span class="one-hl-bracket">(</span><span class="one-hl-number">2</span><span class="one-hl-bracket">)</span></code></pre>
+
+
+<p>The above code would rase this error:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-variable-name">TypeError</span><span class="one-hl-delimiter">:</span> <span class="one-hl-variable-use">can</span> <span class="one-hl-variable-use">only</span> <span class="one-hl-variable-use">concatenate</span> <span class="one-hl-function-call">str</span> <span class="one-hl-bracket">(</span><span class="one-hl-keyword">not</span> <span class="one-hl-string">"int"</span><span class="one-hl-bracket">)</span> <span class="one-hl-variable-use">to</span> <span class="one-hl-type">str</span></code></pre>
+
+
+<p>However, using type annotations would help us catch this error before the code is even executed:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-keyword">def</span> <span class="one-hl-function-name">hello</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-name">a</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span><span class="one-hl-bracket">)</span> <span class="one-hl-operator">-&gt;</span> <span class="one-hl-type">str</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-keyword">return</span> <span class="one-hl-string">"hello "</span> <span class="one-hl-operator">+</span> <span class="one-hl-variable-use">a</span>
+
+<span class="one-hl-function-call">hello</span><span class="one-hl-bracket">(</span><span class="one-hl-number">2</span><span class="one-hl-bracket">)</span></code></pre>
+
+<p>Trying to compile this code with mypy would yield the following error:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-variable-name">error</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">Argument</span> <span class="one-hl-number">1</span> <span class="one-hl-variable-use">to</span> <span class="one-hl-string">"hello"</span> <span class="one-hl-variable-use">has</span> <span class="one-hl-variable-use">incompatible</span> <span class="one-hl-variable-use">type</span> <span class="one-hl-string">"int"</span></code></pre>
+
+<p>Of course, using a good IDE or text editor with good static analysis tools would
+help us catch this error while writing the code.
+</p>
+
+<p>Obviously, Python type annotations work with classes as well. For example:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-keyword">import</span> <span class="one-hl-variable-use">requests</span>
+<span class="one-hl-keyword">from</span> <span class="one-hl-variable-use">typing</span> <span class="one-hl-keyword">import</span> <span class="one-hl-type">List</span>
+
+<span class="one-hl-keyword">class</span> <span class="one-hl-type">Book</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">title</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span>
+        <span class="one-hl-variable-name">authors</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">List</span><span class="one-hl-bracket">[</span><span class="one-hl-type">str</span><span class="one-hl-bracket">]</span>
+
+<span class="one-hl-keyword">def</span> <span class="one-hl-function-name">get_book_from_api</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-name">endpoint</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span><span class="one-hl-bracket">)</span> <span class="one-hl-operator">-&gt;</span> <span class="one-hl-type">Book</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">response</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">requests</span><span class="one-hl-delimiter">.</span><span class="one-hl-function-call">get</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">endpoint</span><span class="one-hl-bracket">)</span>
+        <span class="one-hl-variable-name">response_json</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">response</span><span class="one-hl-delimiter">.</span><span class="one-hl-function-call">json</span><span class="one-hl-bracket">()</span>
+        <span class="one-hl-variable-name">book</span> <span class="one-hl-operator">=</span> <span class="one-hl-function-call">Book</span><span class="one-hl-bracket">()</span>
+        <span class="one-hl-variable-use">book</span><span class="one-hl-delimiter">.</span><span class="one-hl-variable-name">title</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">response_json</span><span class="one-hl-bracket">[</span><span class="one-hl-string">"title"</span><span class="one-hl-bracket">]</span>
+        <span class="one-hl-variable-use">book</span><span class="one-hl-delimiter">.</span><span class="one-hl-variable-name">authors</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">response_json</span><span class="one-hl-bracket">[</span><span class="one-hl-string">"authors"</span><span class="one-hl-bracket">]</span>
+
+        <span class="one-hl-keyword">return</span> <span class="one-hl-variable-use">book</span></code></pre>
+
+<p>In the example above, the `Book` class works as a wrapper around some data we
+get from a rest endpoint. It contains two fields, a title field and an authors
+field. Using Python type annotations we have defined the types of both those
+fields. However, assigning the values to each field one by one is a bit
+annoying, and the OOP way to do that would be to assign attributes inside the
+<code class="one-hl one-hl-inline">__init__</code> method:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-keyword">class</span> <span class="one-hl-type">Book</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">title</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span>
+        <span class="one-hl-variable-name">authors</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">List</span><span class="one-hl-bracket">[</span><span class="one-hl-type">str</span><span class="one-hl-bracket">]</span>
+
+        <span class="one-hl-keyword">def</span> <span class="one-hl-function-name">__init__</span><span class="one-hl-bracket">(</span><span class="one-hl-keyword">self</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-name">title</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-name">authors</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">List</span><span class="one-hl-bracket">[</span><span class="one-hl-type">str</span><span class="one-hl-bracket">])</span><span class="one-hl-delimiter">:</span>
+                <span class="one-hl-keyword">self</span><span class="one-hl-delimiter">.</span><span class="one-hl-variable-name">title</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">title</span>
+                <span class="one-hl-keyword">self</span><span class="one-hl-delimiter">.</span><span class="one-hl-variable-name">authors</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">authors</span>
+
+<span class="one-hl-keyword">def</span> <span class="one-hl-function-name">get_book_from_api</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-name">endpoint</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span><span class="one-hl-bracket">)</span> <span class="one-hl-operator">-&gt;</span> <span class="one-hl-type">Book</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">response</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">requests</span><span class="one-hl-delimiter">.</span><span class="one-hl-function-call">get</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">endpoint</span><span class="one-hl-bracket">)</span>
+        <span class="one-hl-variable-name">response_json</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">response</span><span class="one-hl-delimiter">.</span><span class="one-hl-function-call">json</span><span class="one-hl-bracket">()</span>
+        <span class="one-hl-variable-name">book</span> <span class="one-hl-operator">=</span> <span class="one-hl-function-call">Book</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">title</span><span class="one-hl-operator">=</span><span class="one-hl-variable-use">response_json</span><span class="one-hl-bracket">[</span><span class="one-hl-string">"title"</span><span class="one-hl-bracket">]</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-use">authors</span><span class="one-hl-operator">=</span><span class="one-hl-variable-use">response_json</span><span class="one-hl-bracket">[</span><span class="one-hl-string">"authors"</span><span class="one-hl-bracket">])</span>
+
+        <span class="one-hl-keyword">return</span> <span class="one-hl-variable-use">book</span></code></pre>
+
+
+<p>This is great, we&apos;re making important steps here. We managed to create a Python
+class that uses type annotations and can be constructed using the <code class="one-hl one-hl-inline">__init__</code>
+method. But this class is still just a wrapper around some data, so it would be
+great if we can reduce the boilerplate for this code while still keeping all the
+advantages that the Python type system gives us
+</p>
+
+<p>This is where <code class="one-hl one-hl-inline">dataclass</code> becomes useful. It&apos;s a Python decorator that
+automatically adds the <code class="one-hl one-hl-inline">__init__</code> method (including types!) and some additional
+goodies to a Python class. It can be used as follows:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-keyword">import</span> <span class="one-hl-variable-use">requests</span>
+<span class="one-hl-keyword">from</span> <span class="one-hl-variable-use">dataclasses</span> <span class="one-hl-keyword">import</span> <span class="one-hl-variable-name">dataclass</span>
+<span class="one-hl-keyword">from</span> <span class="one-hl-variable-use">typing</span> <span class="one-hl-keyword">import</span> <span class="one-hl-type">List</span>
+
+<span class="one-hl-type">@dataclass</span>
+<span class="one-hl-keyword">class</span> <span class="one-hl-type">Book</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">title</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span>
+        <span class="one-hl-variable-name">authors</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">List</span><span class="one-hl-bracket">[</span><span class="one-hl-type">str</span><span class="one-hl-bracket">]</span>
+
+<span class="one-hl-keyword">def</span> <span class="one-hl-function-name">get_book_from_api</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-name">endpoint</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span><span class="one-hl-bracket">)</span> <span class="one-hl-operator">-&gt;</span> <span class="one-hl-type">Book</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">response</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">requests</span><span class="one-hl-delimiter">.</span><span class="one-hl-function-call">get</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">endpoint</span><span class="one-hl-bracket">)</span>
+        <span class="one-hl-variable-name">response_json</span> <span class="one-hl-operator">=</span> <span class="one-hl-variable-use">response</span><span class="one-hl-delimiter">.</span><span class="one-hl-function-call">json</span><span class="one-hl-bracket">()</span>
+        <span class="one-hl-variable-name">book</span> <span class="one-hl-operator">=</span> <span class="one-hl-function-call">Book</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">title</span><span class="one-hl-operator">=</span><span class="one-hl-variable-use">response_json</span><span class="one-hl-bracket">[</span><span class="one-hl-string">"title"</span><span class="one-hl-bracket">]</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-use">authors</span><span class="one-hl-operator">=</span><span class="one-hl-variable-use">response_json</span><span class="one-hl-bracket">[</span><span class="one-hl-string">"authors"</span><span class="one-hl-bracket">])</span>
+
+        <span class="one-hl-keyword">return</span> <span class="one-hl-variable-use">book</span></code></pre>
+
+
+<p>As you we can see, there&apos;s no need to manually define the <code class="one-hl one-hl-inline">__init__</code> method
+anymore. Not only does this reduce the time needed to write classes since it
+reduces the amount of boilerplate code, it also reduces the probability of
+errors since there&apos;s less boilerplate code for us to type in.
+</p>
+
+<p>However, dataclasses are not a silver bullet and have some drawbacks. But in
+order to understand those drawbacks we must first introduce the notion of <a href="https://en.wikipedia.org/wiki/Duck_typing">duck
+typing</a>. The idea behind it is simple: if it quacks like a duck and walks like
+a duck then it&apos;s a duck. In other words, an object is of a particular type if it
+has all the methods and attributes required by that type.
+</p>
+
+<p>Duck typing cannot be followed with dataclasses though. Consider the following
+example:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-type">@dataclass</span>
+<span class="one-hl-keyword">class</span> <span class="one-hl-type">Table</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">color</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span>
+        <span class="one-hl-variable-name">age</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">int</span>
+
+<span class="one-hl-type">@dataclass</span>
+<span class="one-hl-keyword">class</span> <span class="one-hl-type">Bookshelf</span><span class="one-hl-delimiter">:</span>
+        <span class="one-hl-variable-name">color</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span>
+        <span class="one-hl-variable-name">age</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">int</span>
+
+<span class="one-hl-function-call">Table</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">color</span><span class="one-hl-operator">=</span><span class="one-hl-string">"brown"</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-use">age</span><span class="one-hl-operator">=</span><span class="one-hl-number">12</span><span class="one-hl-bracket">)</span> <span class="one-hl-operator">==</span> <span class="one-hl-function-call">Bookshelf</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">color</span><span class="one-hl-operator">=</span><span class="one-hl-string">"brown"</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-use">age</span><span class="one-hl-operator">=</span><span class="one-hl-number">12</span><span class="one-hl-bracket">)</span> <span class="one-hl-comment"># False</span></code></pre>
+
+<p>Following the logic of duck typing, then both the <code class="one-hl one-hl-inline">Table</code> and the <code class="one-hl one-hl-inline">Bookshelf</code>
+objects should represent the same type since they have the same attributes and
+the same values. However, they are not treated as equal objects because they
+belong to different classes. In order to strip that difference between both
+objects we have to resort to dictionaries:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-bracket">{</span><span class="one-hl-string">"color"</span><span class="one-hl-delimiter">:</span> <span class="one-hl-string">"brown"</span><span class="one-hl-delimiter">,</span> <span class="one-hl-string">"age"</span><span class="one-hl-delimiter">:</span> <span class="one-hl-number">12</span><span class="one-hl-bracket">}</span> <span class="one-hl-operator">==</span> <span class="one-hl-bracket">{</span><span class="one-hl-string">"color"</span><span class="one-hl-delimiter">:</span> <span class="one-hl-string">"brown"</span><span class="one-hl-delimiter">,</span> <span class="one-hl-string">"age"</span><span class="one-hl-delimiter">:</span> <span class="one-hl-number">12</span><span class="one-hl-bracket">}</span> <span class="one-hl-comment"># True</span></code></pre>
+
+<p>But using Python dicts would make us lose all the advantages that Python types
+gives us, right? Wrong. This is where <code class="one-hl one-hl-inline">TypedDict</code> comes into play. <code class="one-hl one-hl-inline">TypedDict</code>
+basically allows Python dicts to work as types:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-keyword">from</span> <span class="one-hl-variable-use">typing</span> <span class="one-hl-keyword">import</span> <span class="one-hl-type">TypedDict</span>
+
+<span class="one-hl-keyword">class</span> <span class="one-hl-type">Table</span><span class="one-hl-bracket">(</span><span class="one-hl-type">TypedDict</span><span class="one-hl-bracket">)</span><span class="one-hl-delimiter">:</span>
+    <span class="one-hl-variable-name">color</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span>
+    <span class="one-hl-variable-name">age</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">int</span>
+
+<span class="one-hl-keyword">class</span> <span class="one-hl-type">Bookshelf</span><span class="one-hl-bracket">(</span><span class="one-hl-type">TypedDict</span><span class="one-hl-bracket">)</span><span class="one-hl-delimiter">:</span>
+    <span class="one-hl-variable-name">color</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">str</span>
+    <span class="one-hl-variable-name">age</span><span class="one-hl-delimiter">:</span> <span class="one-hl-type">int</span>
+
+<span class="one-hl-function-call">Table</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">color</span><span class="one-hl-operator">=</span><span class="one-hl-string">"brown"</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-use">age</span><span class="one-hl-operator">=</span><span class="one-hl-number">12</span><span class="one-hl-bracket">)</span> <span class="one-hl-operator">==</span> <span class="one-hl-function-call">Bookshelf</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">color</span><span class="one-hl-operator">=</span><span class="one-hl-string">"brown"</span><span class="one-hl-delimiter">,</span> <span class="one-hl-variable-use">age</span><span class="one-hl-operator">=</span><span class="one-hl-number">12</span><span class="one-hl-bracket">)</span> <span class="one-hl-comment"># True</span>
+</code></pre>
+
+<p>However, even though <code class="one-hl one-hl-inline">TypedDict</code> can give us all the advantages of duck typing,
+it has two big disadvantages compared to dataclasses:
+</p>
+
+<ol><li><p>Validation is harder
+</p>
+</li>
+<li><p>Not immutable
+</p>
+</li>
+</ol>
+
+<p>Let&apos;s start with the first point. Since dataclasses can have explicit <code class="one-hl one-hl-inline">__init__</code>
+methods, then they can be validated whenever an object of that type is
+constructed. This is not true for <code class="one-hl one-hl-inline">TypedDict</code> and every time we construct a
+dictionary of a specific type, then we&apos;d have to validate all its values at
+runtime.
+</p>
+
+<p>Whereas for immutability, in dataclasses its ensured by the <code class="one-hl one-hl-inline">frozen=True</code>
+argument. If set, it ensures that any object that belongs to that type would be
+immutable, which is not possible with <code class="one-hl one-hl-inline">TypedDict</code>.
+</p>
+</div>
+<div class="nav"><a href="/blog/software-abstraction-barrier/">PREV</a><a href="/blog/feynman-technique/">RANDOM</a><a href="/blog/feynman-technique/">NEXT</a></div></div></body></html>

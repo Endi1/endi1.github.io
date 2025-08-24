@@ -1,0 +1,41 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Useful latency numbers</title></head><body><div class="header"><a href="/">endisukaj.dev</a></div><div class="content"><div class="title"><div class="title"><h1>Useful latency numbers</h1></div></div><div><p>1ns = 10^(-9)s
+</p>
+
+<p>1μs = 10^(-6)s
+</p>
+
+<p>1ms = 10^(-3)s
+</p>
+
+
+<p>1ns - 10ns ---&gt; L1/L2 Cache
+</p>
+
+<p>10ns - 100ns ---&gt; L3 cache
+</p>
+
+<p>100ns - 1μs ---&gt; [System call] -&gt; [C library] -&gt; Kernel or MD5 hashing 64 bit number
+</p>
+
+<p>1μs - 10μs ---&gt; Context switching between threads. Depends on the size of data
+</p>
+
+<p>10μs - 100μs ---&gt; process HTTP request or sequential of a 8KB file from SSD
+</p>
+
+<p>100μs 1ms ---&gt; SSD write latency or intra-zone networking round-trip or Memcache/Redis GET
+</p>
+
+<p>1ms - 10ms ---&gt; Intra-zone networking latency or seektime of HDD.
+</p>
+
+<p>10ms - 100ms ---&gt; Network round-trip for US-EU or read 1GB from main memory
+</p>
+
+<p>100ms - 1s ---&gt; bcrypt a password or TLS handshake or network roundtrip between US west coast and Singapore or 1GB sequential read from SSD.
+</p>
+
+<p>1s+ ---&gt; Transfer 1GB over the network within the same region.
+</p>
+</div>
+<div class="nav"><a href="/blog/haskell-libraries/">PREV</a><a href="/blog/dataclass-vs-typeddict-in-python/">RANDOM</a><a href="/blog/using-python-schema-to-validate-scraped-objects/">NEXT</a></div></div></body></html>

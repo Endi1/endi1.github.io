@@ -1,0 +1,78 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Using Python schema to validate scraped objects</title></head><body><div class="header"><a href="/">endisukaj.dev</a></div><div class="content"><div class="title"><div class="title"><h1>Using Python schema to validate scraped objects</h1></div></div><div><p>Web scraping describes the various techniques employed in extracting data from
+websites. More often than not, this is done programmatically using tiny programs
+called spiders. However, web scraping offers insidious challenges and obstacles
+that might not be immediately obvious. One of them is issues with <b><b>data
+validity.</b></b>
+</p>
+
+<p>Usually the final objective of web scraping is extracting structured data from
+semi-structured or unstructured content. The structured data often comes with a
+prerequisite of data validity. In other words, for the structured data that we
+need to scrape, certain (or all) data points needs to satisfy some requirements
+in order to be considered valid. For example, let’s assume that we have to
+scrape property data from a collection of websites that list new properties for
+sale. We need to scrape the following data (among others):
+</p>
+
+<ul><li><p>price (in USD)
+</p>
+</li>
+<li><p>surface
+</p>
+</li>
+<li><p>number of rooms
+</p>
+</li>
+<li><p>location
+</p>
+</li>
+</ul>
+
+<p>For all of them we need to make sure that they are found in each object in the
+output, and that they are of the correct type and value. For example, <b>price,
+number of rooms, and surface</b> all need to be numbers. <b>location</b> must be a
+string. Furthermore, <b>number of rooms</b> must not be too big (there’s not that
+many houses with over 100 rooms on the market, if any). If any of these
+conditions are not met, then it means that there is a problem with scraping and
+parsing one (or more) of the pages and we risk sending faulty data downstream.
+</p>
+
+<p>Most large-scale web crawling solutions will have some sort of pipeline in their
+workflow that is dedicated to validating and processing the scraped data. One
+way to do validation is by using ad-hoc logic that makes sure that the data
+points are of the type and value required. Often this involves complex
+multi-step checks and algorithms and it’s hard to scale and update as new data
+types are scraped or if old ones have updated requirements.
+</p>
+
+<p>To avoid this, I like using a Python library called <a href="https://github.com/keleshev/schema">schema</a>. It allows you to
+validate JSON or YAML data using Python data types and logic. To continue the
+example above, for the property data we scrape, we can define the following
+schema:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-keyword">from</span> <span class="one-hl-variable-use">schema</span> <span class="one-hl-keyword">import</span> <span class="one-hl-type">Schema</span><span class="one-hl-delimiter">,</span> <span class="one-hl-type">And</span><span class="one-hl-delimiter">,</span> <span class="one-hl-type">Use</span><span class="one-hl-delimiter">,</span> <span class="one-hl-type">Optional</span><span class="one-hl-delimiter">,</span> <span class="one-hl-type">SchemaError</span>
+
+<span class="one-hl-variable-name">schema</span> <span class="one-hl-operator">=</span> <span class="one-hl-function-call">Schema</span><span class="one-hl-bracket">([{</span>
+        <span class="one-hl-string">'price'</span><span class="one-hl-delimiter">:</span> <span class="one-hl-variable-use">int</span><span class="one-hl-delimiter">,</span>
+        <span class="one-hl-string">'surface'</span><span class="one-hl-delimiter">:</span>  <span class="one-hl-variable-use">int</span><span class="one-hl-delimiter">,</span>
+        <span class="one-hl-string">'number_of_rooms'</span><span class="one-hl-delimiter">:</span> <span class="one-hl-function-call">And</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">int</span><span class="one-hl-delimiter">,</span> <span class="one-hl-keyword">lambda</span> <span class="one-hl-variable-name">n</span><span class="one-hl-delimiter">:</span> <span class="one-hl-number">0</span> <span class="one-hl-operator">&lt;</span> <span class="one-hl-variable-use">n</span> <span class="one-hl-keyword">and</span> <span class="one-hl-variable-use">n</span> <span class="one-hl-operator">&lt;=</span> <span class="one-hl-number">100</span><span class="one-hl-bracket">)</span><span class="one-hl-delimiter">,</span>
+    <span class="one-hl-string">'location'</span><span class="one-hl-delimiter">:</span> <span class="one-hl-variable-use">str</span>
+<span class="one-hl-bracket">}])</span></code></pre>
+
+
+<p>Finally in the pipeline we can simply do:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-variable-use">schema</span><span class="one-hl-delimiter">.</span><span class="one-hl-function-call">validate</span><span class="one-hl-bracket">(</span><span class="one-hl-variable-use">data</span><span class="one-hl-bracket">)</span></code></pre>
+
+
+<p>If the data is valid then it will return the data, otherwise a <code class="one-hl one-hl-inline">SchemaError</code>
+exception will be thrown.
+</p>
+
+<p>Doing this we can add a clear validation layer that is separate from any
+processing layer which is easy to read, update, and scale as needed.
+</p>
+</div>
+<div class="nav"><a href="/blog/useful-latency-numbers/">PREV</a><a href="/">RANDOM</a><a href="/blog/emacs-static-site-generators/">NEXT</a></div></div></body></html>
