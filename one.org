@@ -444,7 +444,7 @@ https://orgmode.org/manual/Publishing.html
 * A review of Eglot
 :PROPERTIES:
 :ONE: one-default
-:CUSTOM_ID: /blog/a-review-of-eglot
+:CUSTOM_ID: /blog/a-review-of-eglot/
 :END:
 
 I have been using [[https://github.com/joaotavora/eglot][eglot]] for the past month after years of using
