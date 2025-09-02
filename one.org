@@ -441,3 +441,32 @@ https://orgmode.org/manual/Publishing.html
   Markdown, etc)
 *** Cons
 - Needs some work to get up and running
+* A review of Eglot
+:PROPERTIES:
+:ONE: one-default
+:CUSTOM_ID: /blog/a-review-of-eglot
+:END:
+
+I have been using [[https://github.com/joaotavora/eglot][eglot]] for the past month after years of using
+[[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] for years. The main reason for switching was the fact that
+eglot is now built-in into emacs and as such it's independent from the
+whims of maintainers and contributors for its survival. Even though I
+must say that I have nothing but the greatest admiration for the
+maintainers and contributors of lsp-mode, since, as I said, I've been
+happily using it for years.
+
+So far my experience with Eglot has been /just fine/. It does its thing
+and stays out of my way most of the time, which is what you'd want
+from an lsp client. It can be too minimalistic at times, and it lacks
+some of the features that I enjoyed in lsp-mode, such as built-in
+support for installing missing servers, or multi-server
+support. Especially the latter is sorely missed because for Python
+development I was used to running pyright and ruff (as an lsp server)
+at the same time. But fortunately I can still get ruff support through
+[[https://github.com/erickgnavar/flymake-ruff/tree/1074f358736ace68d0eefa9cd7727ebed0de7c00][flymake-ruff]].
+
+I'll keep using it for some more weeks and then decide if it's worth
+putting my fate in the hands of lsp-mode again or not. One thing I'm
+sure of, is that I'm happy that I finally gave eglot a shot, and if
+nothing else, I know that there's always going to be a pretty good lsp
+client for emacs out there.
