@@ -470,3 +470,21 @@ putting my fate in the hands of lsp-mode again or not. One thing I'm
 sure of, is that I'm happy that I finally gave eglot a shot, and if
 nothing else, I know that there's always going to be a pretty good lsp
 client for emacs out there.
+
+* Interactions between gptel and org-mode
+:PROPERTIES:
+:ONE: one-default
+:CUSTOM_ID: /blog/gptel-org/
+:END:
+
+I am a huge fan of [[https://github.com/karthink/gptel][gptel]] and I use it daily as my main mode of communication with various LLM providers. One of the main uses I get from LLMs is when I'm learning or exploring new technologies. I've set it up to take org-mode text as input and to of course output text in org-mode as well. It comes pretty handy since everything is happening inside emacs, and it's also useful for writing and note-taking which I almost exclusively do inside Emacs in org-mode, unless I'm forced to do otherwise.
+
+Lately I've been looking into Go and trying my hand at it for some small projects and pushing the changes for a small feature for a JSON parsing library I've been working on, I realized I had not formatted my files. Since I wasn't sure how to do that for all the files in a directory, I of course turned to Claude from inside a gptel window that I always keep open at the side. It responded with a bunch of commands along with explanations for all of them. Crucially, all the bash commands it recommended are neatly formatted inside org's =*_src= tags:
+
+#+begin_src org
+,#+begin_src bash
+gofmt -w .
+,#+end_src
+#+end_src
+
+This is pretty nice because I can simply run the bash command from inside org through org-babel! Which is what I did and it worked perfectly. This makes me wonder what more uses can I find for this? Can this combination of org, org-babel, and gptel turn emacs into a full-fledged LLM-driven IDE?

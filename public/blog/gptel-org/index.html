@@ -1,0 +1,14 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1" /><link rel="stylesheet" type="text/css" href="/one.css" /><title>Interactions between gptel and org-mode</title></head><body><div class="header"><a href="/">endisukaj.dev</a></div><div class="content"><div class="title"><div class="title"><h1>Interactions between gptel and org-mode</h1></div></div><div><p>I am a huge fan of <a href="https://github.com/karthink/gptel">gptel</a> and I use it daily as my main mode of communication with various LLM providers. One of the main uses I get from LLMs is when I&apos;m learning or exploring new technologies. I&apos;ve set it up to take org-mode text as input and to of course output text in org-mode as well. It comes pretty handy since everything is happening inside emacs, and it&apos;s also useful for writing and note-taking which I almost exclusively do inside Emacs in org-mode, unless I&apos;m forced to do otherwise.
+</p>
+
+<p>Lately I&apos;ve been looking into Go and trying my hand at it for some small projects and pushing the changes for a small feature for a JSON parsing library I&apos;ve been working on, I realized I had not formatted my files. Since I wasn&apos;t sure how to do that for all the files in a directory, I of course turned to Claude from inside a gptel window that I always keep open at the side. It responded with a bunch of commands along with explanations for all of them. Crucially, all the bash commands it recommended are neatly formatted inside org&apos;s <code class="one-hl one-hl-inline">*_src</code> tags:
+</p>
+
+<pre><code class="one-hl one-hl-block"><span class="one-hl-org-block-begin-line">#+begin_src bash
+</span><span class="one-hl-org-block">gofmt -w .
+</span><span class="one-hl-org-block-end-line">#+end_src</span></code></pre>
+
+<p>This is pretty nice because I can simply run the bash command from inside org through org-babel! Which is what I did and it worked perfectly. This makes me wonder what more uses can I find for this? Can this combination of org, org-babel, and gptel turn emacs into a full-fledged LLM-driven IDE?
+</p>
+</div>
+<div class="nav"><a href="/blog/a-review-of-eglot/">PREV</a><a href="/blog/dataclass-vs-typeddict-in-python/">RANDOM</a></div></div></body></html>
